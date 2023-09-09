@@ -9,6 +9,8 @@ Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     // Assign event handlers and other initialization logic.
     document.getElementById("create-table").onclick = () => tryCatch(createTable);
+    document.getElementById("filter-table").onclick = () => tryCatch(filterTable);
+    document.getElementById("sort-table").onclick = () => tryCatch(sortTable);
 
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
@@ -36,11 +38,39 @@ async function createTable() {
     ]);
 
     // TODO3: Queue commands to format the table.
-    expensesTable.columns.getItemAt(3).getRange().numberFormat = [['\u20AC#,##0.00']];
+    expensesTable.columns.getItemAt(3).getRange().numberFormat = [["\u20AC#,##0.00"]];
     expensesTable.getRange().format.autofitColumns();
     expensesTable.getRange().format.autofitRows();
 
     await context.sync();
+  });
+}
+
+async function filterTable() {
+  await Excel.run(async (context) => {
+    // TODO1: Queue commands to filter out all expense categories except
+    // Groceries and Education.
+    const currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+    const expensesTable = currentWorksheet.tables.getItem("ExpensesTable");
+    expensesTable.columns.getItem("Category").filter.applyValuesFilter(["Education", "Groceries"]);
+
+    await context.sync();
+  });
+}
+
+async function sortTable() {
+  await Excel.run(async (context) => {
+    // TODO1: Queue commands to sort the table by Merchant name.
+    const currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+    const expensesTable = currentWorksheet.tables.getItem("ExpensesTable");
+    const sortFields = [
+      {
+        key: 1, // Merchant column
+        ascending: false,
+      }
+    ];
+
+    expensesTable.sort.apply(sortFields);
   });
 }
 
