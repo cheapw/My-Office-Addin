@@ -67,7 +67,7 @@ async function sortTable() {
       {
         key: 1, // Merchant column
         ascending: false,
-      }
+      },
     ];
 
     expensesTable.sort.apply(sortFields);
