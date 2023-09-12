@@ -12,6 +12,7 @@ Office.onReady((info) => {
     document.getElementById("filter-table").onclick = () => tryCatch(filterTable);
     document.getElementById("sort-table").onclick = () => tryCatch(sortTable);
     document.getElementById("create-chart").onclick = () => tryCatch(createChart);
+    document.getElementById("freeze-header").onclick = () => tryCatch(freezeHeader);
 
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
@@ -93,6 +94,15 @@ async function createChart() {
     chart.dataLabels.format.font.size = 15;
     chart.dataLabels.format.font.color = "black";
     chart.series.getItemAt(0).name = "Value in \u20AC";
+  });
+}
+
+async function freezeHeader() {
+  await Excel.run(async (context) => {
+    // TODO1: Queue commands to keep the header visible where the user scrolls.
+    const currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+    currentWorksheet.freezePanes.freezeRows(1);
+    await context.sync();
   });
 }
 
