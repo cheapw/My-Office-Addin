@@ -28,6 +28,32 @@ function action(event) {
   event.completed();
 }
 
+async function toggleProtection(args) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+
+      sheet.load("protection/protected");
+      await context.sync();
+
+      if (sheet.protection.protected) {
+        sheet.protection.unprotect();
+      } else {
+        sheet.protection.protect();
+      }
+
+      await context.sync();
+    });
+  } catch (error) {
+    // Note: In a production add-in, you'd want to notify the user through your add-in's UI.
+    console.error(error);
+  }
+
+  args.completed();
+}
+
+Office.actions.associate("toggleProtection", toggleProtection);
+
 function getGlobal() {
   return typeof self !== "undefined"
     ? self
